@@ -54,7 +54,7 @@ int main()
 	for (auto i : id) {
 		cout << i <<" ";
 	}
-	cout <<"\n"
+	cout <<"\n";
 	int s;
 	printf_s("Введите номер id, который необходимо декодировать");
 	scanf_s("%i", &s);
