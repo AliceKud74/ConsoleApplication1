@@ -25,7 +25,7 @@ int main()
 			int a = input.find(' ', b + 1);
 			if ((c < M) || (c > N)) {
 				output.append(input.substr(b + 1, a - b));
-				
+				//cout << input.substr(b, i - b);
 			}
 			b = a;
 			c++;
@@ -60,9 +60,12 @@ int main()
 	cout << "\n";
 	int s;
 	printf_s("Введите номер id, который необходимо декодировать  ");
-	try {
-		scanf_s("%i", &s);
-		
+	try{
+	    scanf_s("%i", &s);
+		if ((s > N1) || (s < 1)) {
+			throw - 1;
+		}
+
 		cout << (id[s - 1] >> n);
 	}
 	catch (...) {
