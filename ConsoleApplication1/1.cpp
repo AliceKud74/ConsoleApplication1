@@ -10,10 +10,10 @@ int main()
 	string output;
 	int M;
 	int N;
-	cout << "Ââåäèòå ñòğîêó: ";
+	cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ ÑÑ‚Ñ€Ğ¾ĞºÑƒ: ";
 	getline(cin, input);
 	input.insert(0, " ");
-	printf_s("Ââåäèòå M è N ");
+	printf_s("Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ M Ğ¸ N ");
 	scanf_s("%i%i", &M,&N);
 	int b = 0;
 	int c = 1;
@@ -56,7 +56,7 @@ int main()
 	}
 	cout <<"\n"
 	int s;
-	printf_s("Ââåäèòå íîìåğ id, êîòîğûé íåîáõîäèìî äåêîäèğîâàòü");
+	printf_s("Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ½Ğ¾Ğ¼ĞµÑ€ id, ĞºĞ¾Ñ‚Ğ¾Ñ€Ñ‹Ğ¹ Ğ½ĞµĞ¾Ğ±Ñ…Ğ¾Ğ´Ğ¸Ğ¼Ğ¾ Ğ´ĞµĞºĞ¾Ğ´Ğ¸Ñ€Ğ¾Ğ²Ğ°Ñ‚ÑŒ");
 	scanf_s("%i", &s);
 	cout << (id[s - 1] >> n);
 	
