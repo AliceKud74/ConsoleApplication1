@@ -1,10 +1,13 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+#include <Windows.h>
 using namespace std;
 int main()
 {
 	setlocale(LC_ALL, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	string input;
 	string output;
 	int M;
@@ -22,7 +25,7 @@ int main()
 			int a = input.find(' ', b + 1);
 			if ((c < M) || (c > N)) {
 				output.append(input.substr(b + 1, a - b));
-				//cout << input.substr(b, i - b);
+				
 			}
 			b = a;
 			c++;
@@ -48,7 +51,7 @@ int main()
 		cout << i << " ";
 	}
 	cout << "\n";
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < N1; i++) {
 		id[i] = (id[i] << n);
 	}
 	for (auto i : id) {
