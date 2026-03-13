@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <cstdio>
 #include <string>
@@ -14,14 +13,15 @@ int main()
 	getline(cin, input);
 	input.insert(0, " ");
 	printf_s("Введите M и N ");
-	scanf_s("%i%i", &M,&N);
+	scanf_s("%i%i", &M, &N);
+
 	int b = 0;
 	int c = 1;
-	while(b<input.length()) {
-		if ((input[b] == ' ') && (input[b+1]!=' ')) {
+	while (b < input.length()) {
+		if ((input[b] == ' ') && (input[b + 1] != ' ')) {
 			int a = input.find(' ', b + 1);
 			if ((c < M) || (c > N)) {
-				output.append(input.substr(b+1,a-b));
+				output.append(input.substr(b + 1, a - b));
 				//cout << input.substr(b, i - b);
 			}
 			b = a;
@@ -30,10 +30,10 @@ int main()
 		else {
 			b++;
 		}
-		
+
 	}
 
-	cout << output<< "\n";
+	cout << output << "\n";
 	int n = 5;
 	const int N1 = 10;
 	int id[N1];
@@ -45,27 +45,28 @@ int main()
 	}
 
 	for (auto i : id) {
-		cout << i<<" ";
+		cout << i << " ";
 	}
 	cout << "\n";
 	for (int i = 0; i < n; i++) {
 		id[i] = (id[i] << n);
 	}
 	for (auto i : id) {
-		cout << i <<" ";
+		cout << i << " ";
 	}
-	cout <<"\n";
+	cout << "\n";
 	int s;
-	printf_s("Введите номер id, который необходимо декодировать");
-	scanf_s("%i", &s);
-	cout << (id[s - 1] >> n);
-	
+	printf_s("Введите номер id, который необходимо декодировать  ");
+	try {
+		scanf_s("%i", &s);
+		if (s > N1) {
+			throw "Неверный индекс\n";
+		}
+		cout << (id[s - 1] >> n);
+	}
+	catch (...) {
+		cout << "Ошибка" << endl;
+	}
+
 	return 0;
 }
-
-	
-
-
-
-   
-
