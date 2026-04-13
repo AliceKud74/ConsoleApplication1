@@ -63,7 +63,7 @@ void read(mountain arr[], int size)
                 fin.getline(name,50,'-');
                 fin >> height;
                 fin.ignore();
-                cout << name << height;
+                
                 for (int i = 0; i < size; i++){
                     if (!strcmp(arr[i].name, name)) {
                         arr[i].height = height;
