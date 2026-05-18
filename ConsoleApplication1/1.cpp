@@ -1,183 +1,211 @@
 #include <iostream>
-#include <string.h>
-#include <fstream>
+#include <cmath>
+#include <algorithm> 
+#include <Windows.h>
 using namespace std;
 
-enum type { v, sk, pl };
 
-struct mountain {
-    char country[50];
-    char name[50];
-    int height;
-    type tip;
+
+class d_2vector {
+protected:
+    double i;
+    double j;
+public:
+    static double max_length; 
+
+    virtual double length() {
+        return i * i + j * j; 
+    }
+
+    d_2vector(double i_in = 0, double j_in = 0) {
+        i = i_in;
+        j = j_in;
+        max_length = max(sqrt(this->length()), max_length);
+    }
+
+    virtual void info() {
+        cout << "(" << i << ", " << j << ") [Длина: " << sqrt(length()) << "]";
+    }
+
+    bool operator==(const d_2vector& other) const {
+        return (i == other.i && j == other.j);
+    }
+
+    friend ostream& operator<<(ostream& os, d_2vector& v) {
+        v.info();
+        return os;
+    }
+};
+double d_2vector::max_length = 0;
+
+class d_3vector : public d_2vector {
+    double k;
+public:
+    double length()  {
+        return i * i + j * j + k * k;
+    }
+
+    d_3vector(double i_in = 0, double j_in = 0, double k_in = 0) : d_2vector(i_in, j_in) {
+        k = k_in;
+ 
+        max_length = max(sqrt(this->length()), max_length);
+    }
+
+    void info()  {
+        cout << "(" << i << ", " << j << ", " << k << ") [Длина: " << sqrt(length()) << "]";
+    }
+
+    bool operator==(const d_3vector& other) const {
+        return (i == other.i && j == other.j && k == other.k);
+    }
+
+    friend ostream& operator<<(ostream& os, d_3vector& v) {
+        v.info();
+        return os;
+    }
 };
 
-const int SIZE = 20;
 
 
-void printall(void (*func)(mountain arr[], int), mountain arr[], int size) {
-    func(arr, size);
-    for (int i = 0; i < size; i++) {
-        const char* typeName = "";
-        if (arr[i].tip == v) typeName = "Вулканическая";
-        else if (arr[i].tip == sk) typeName = "Складчатая";
-        else if (arr[i].tip == pl) typeName = "Платообразная";
 
-        cout << arr[i].name << " (Страна: " << arr[i].country
-            << ", Высота: " << arr[i].height
-            << "м, Тип: " << typeName << ")" << endl;
-    }
-}
-
-void sort(mountain arr[], int size) {
-    for (int a = 0; a < size - 1; a++) {
-        for (int b = size - 1; b > a; b--) {
-            if (arr[b - 1].height < arr[b].height) {
-                mountain t = arr[b - 1]; 
-                arr[b - 1] = arr[b];
-                arr[b] = t;
+template <typename T>
+class array_adt {
+private:
+    int cnt;  
+    T* arr;  
+public:
+    array_adt(int size=0, const T* initial_arr={}) {
+        cnt = size;
+        if (cnt > 0 && initial_arr != nullptr) {
+            arr = new T[cnt];
+            for (int i = 0; i < cnt; i++) {
+                arr[i] = initial_arr[i];
             }
         }
-    }
-}
-
-void update(mountain arr[], int size, const char targetName[]) {
-    for (int i = 0; i < size; i++) {
-        if (!strcmp(arr[i].name, targetName)) {
-            cout << "Вершина " << targetName << " найдена. Введите новую высоту: ";
-            cin >> arr[i].height;
-            cout << "Данные успешно обновлены!\n";
-            return;
+        else {
+            arr = nullptr;
         }
     }
-    cout << "Вершина с названием " << targetName << " не найдена.\n";
-}
-void read(mountain arr[], int size)
-{
-    ifstream fin;
-    char name[50]; int height;
-    fin.open("mountain.txt"); 
-        if (fin.is_open()) {
-            while (!fin.eof())
-            {
-                fin.getline(name,50,'-');
-                fin >> height;
-                fin.ignore();
-                
-                for (int i = 0; i < size; i++){
-                    if (!strcmp(arr[i].name, name)) {
-                        arr[i].height = height;
-                        break;
-                    }
-                }
+    ~array_adt() {
+        delete[] arr;
+    }
+    array_adt(const array_adt& other) {
+        cnt = other.cnt;
+        if (cnt > 0) {
+            arr = new T[cnt];
+            for (int i = 0; i < cnt; i++) {
+                arr[i] = other.arr[i];
             }
         }
-    fin.close();
-}
-void write_bin(mountain arr[],int size)
-{
-    setlocale(LC_ALL, "");
-    
-    ofstream out("mountain_bin.txt",
-        ios::binary | ios::out);
-    for (unsigned i = 0; i < size; i++) {
-        out.write((char*)&arr[i], sizeof(arr[i]));
-        
-    }
-    out.close();
-}
-void read_bin(mountain arr[], int size)
-{
-    {
-        
-       fstream in("mountain_bin.txt",ios::binary | ios::in);
-       for (int i = 0; i < size; i++) {
-           in.read((char*)&arr[i], sizeof(arr[i]));
-            
-       }
-        in.close(); 
-            
+        else {
+            arr = nullptr;
+        }
     }
 
-}
+   
+    array_adt& operator=(const array_adt& other) {
+        if (this == &other) return *this;
+
+        delete[] arr; 
+
+        cnt = other.cnt;
+        if (cnt > 0) {
+            arr = new T[cnt];
+            for (int i = 0; i < cnt; i++) {
+                arr[i] = other.arr[i];
+            }
+        }
+        else {
+            arr = nullptr;
+        }
+        return *this;
+    }
+
+    void add(T item) {
+        T* temp = new T[cnt + 1];
+        for (int i = 0; i < cnt; i++) {
+            temp[i] = arr[i];
+        }
+        temp[cnt] = item;
+
+        delete[] arr;
+        arr = temp;
+        cnt++;
+    }
+
+    T& operator[](int index) {
+        if (index < 0 || index >= cnt) {
+            throw out_of_range("Индекс за пределами массива!");
+        }
+        return arr[index];
+    }
+
+    bool operator==(const array_adt& other) const {
+        if (cnt != other.cnt) return false;
+        for (int i = 0; i < cnt; i++) {
+            if (!(arr[i] == other.arr[i])) return false;
+        }
+        return true;
+    }
+
+  
+    bool operator!=(const array_adt& other) const {
+        return !(*this == other);
+    }
+
+    void info_arr() {
+        cout << "{ \n";
+        for (int c = 0; c < cnt; c++) {
+            cout << "  [" << c << "]: " << arr[c] << "\n";
+        }
+        cout << "}\n";
+    }
+};
 
 int main() {
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "Russian");
-    mountain mountains[SIZE] = {
-        { "Russia", "Elbrus", 5642, v },
-        { "France", "Mont Blanc", 4808, sk },
-        { "Tanzania", "Kilimanjaro", 5895, v },
-        { "Argentina", "Aconcagua", 6962, sk },
-        { "USA", "Denali", 6190, pl },
-        { "Switzerland", "Matterhorn", 4478, sk },
-        { "Ukraine", "Hoverla", 2061, sk },
-        { "Australia", "Kosciuszko", 2228, pl },
-        { "Japan", "Fuji", 3776, v },
-        { "Ecuador", "Chimborazo", 6263, v },
-        { "Tajikistan", "Ismoil Somoni", 7495, sk },
-        { "Kyrgyzstan", "Lenin Peak", 7134, sk },
-        { "Nepal", "Kangchenjunga", 8586, sk },
-        { "China", "Lhotse", 8516, sk },
-        { "Nepal", "Makalu", 8485, sk },
-        { "Nepal", "Everest", 8848, sk },
-        { "Pakistan", "K2", 8611, sk },
-        { "Nepal", "Cho Oyu", 8188, sk },
-        { "USA", "Mauna Kea", 4207, v },
-        { "Kenya", "Mount Kenya", 5199, v }
-    };
-    double sum = 0;
-    for (int i = 0; i < SIZE; i++) {
-        sum += mountains[i].height;
-    }
-    cout << "--- 1. Средняя высота вершин ---" << endl;
-    cout << "Средняя высота: " << sum / SIZE << " метров\n\n";
-    cout << "--- 2. Отсортированный список (по убыванию высоты) ---" << endl;
-    printall(sort, mountains,SIZE);
-    cout << "\n";
-    cout << "--- 3. Страны местонахождения 4-х восьмитысячников ---" << endl;
-    int count8k = 0;
-    for (int i = 0; i < SIZE; i++) {
-        if (mountains[i].height >= 8000) {
-            cout << ++count8k << ". Страна: " << mountains[i].country << " (Вершина: " << mountains[i].name <<" ("<< mountains[i].height<< "))" << endl;
-            if (count8k == 4) break;
-        }
-    }
-    cout << "\n";
-    cout << "--- 4. Изменение данных ---" << endl;
-    char s[50];
-    cout << "Введите название вершины для изменения ";
-    cin >> s;
-    update(mountains, SIZE, s);
-    cout << "\n";
-    printall(sort, mountains, SIZE);
-    cout << "\n";
-    cout << "--- 5. Поиск вершин по стране ---" << endl;
-    char target[50];
-    cout << "Введите страну для поиска ";
-    cin >> target;
-    mountain fMountains[SIZE];
-    int fCount = 0;
-    for (int i = 0; i < SIZE; i++) {
-        if
 
+    cout << "=== РАБОТА С МАССИВОМ ЦЕЛЫХ ЧИСЕЛ ===" << endl;
+    array_adt<int> int_arr;
+    int_arr.add(10);
+    int_arr.add(20);
+    int_arr.add(30);
 
-            (!strcmp(mountains[i].country, target)) {
-            fMountains[fCount] = mountains[i];
-            fCount++;
-        }
-    }
-    if (fCount > 0) {
-        cout << "Найдены следующие вершины в стране " << target << ":" << endl;
-        printall(sort,fMountains, fCount);
-    }
-    else {
-        cout << "В стране " << target << " вершин не найдено.\n";
-    }
-    cout << "--- 6. Чтение из текстового файла ---" << endl;
-    printall(read, mountains, SIZE);
-    cout << "--- 7. Чтение/запись в бинарный файл ---" << endl;
-    write_bin(mountains, SIZE);
-    mountain mountains_new[SIZE];
-    printall(read_bin,mountains_new, SIZE);
+    cout << "Массив чисел: ";
+    int_arr.info_arr();
+
+    cout << "Элемент по индексу [1]: " << int_arr[1] << endl;
+    int_arr[1] = 50; 
+    cout << "После изменения [1] на 50: " << int_arr[1] << endl;
+    int source[] = { 10,50,30 };
+    array_adt<int> int_arr2(3, source);
+    cout << "Массив 1 == Массив 2? " << (int_arr == int_arr2 ? "Да" : "Нет") << endl;
+    int_arr2.add(99);
+    cout << "Массив 1 != Массив 2 (после изменения)? " << (int_arr != int_arr2 ? "Да" : "Нет") << endl;
+
+    cout << endl;
+
+   
+    cout << "=== РАБОТА С МАССИВОМ ВЕКТОРОВ ===" << endl;
+
+    array_adt<d_2vector> vec2d_arr;
+    vec2d_arr.add(d_2vector(3, 4));   
+    vec2d_arr.add(d_2vector(1, 1));   
+
+    cout << "Массив 2D векторов:" << endl;
+    vec2d_arr.info_arr();
+
+    array_adt<d_3vector> vec3d_arr;
+    vec3d_arr.add(d_3vector(0, 0, 0));
+    vec3d_arr.add(d_3vector(2, 3, 6)); 
+
+    cout << "Массив 3D векторов:" << endl;
+    vec3d_arr.info_arr();
+
+    
+    cout << "Максимальная длина среди всех созданных векторов: " << d_2vector::max_length << endl;
+
     return 0;
 }
